@@ -220,6 +220,19 @@ def unregister():
     # Clear the list that held the PropertyGroups
     skein_property_groups.clear()
 
+    # Clean up runtime added UI state properties
+    del bpy.types.Object.active_component_index
+    del bpy.types.Mesh.active_component_index
+    del bpy.types.Material.active_component_index
+    del bpy.types.Scene.active_component_index
+    del bpy.types.Camera.active_component_index
+    del bpy.types.Light.active_component_index
+    del bpy.types.Collection.active_component_index
+    del bpy.types.Bone.active_component_index
+    del bpy.types.WindowManager.selected_component
+    del bpy.types.WindowManager.skein_property_groups
+    del bpy.types.WindowManager.skein
+
     bpy.utils.unregister_class(SkeinAddonPreferences)
     # data types that are stored on the window because blender
     # doesn't seem to have any other good way of storing data
@@ -235,26 +248,34 @@ def unregister():
     bpy.utils.unregister_class(InsertComponentOnObject)
     bpy.utils.unregister_class(InsertComponentOnMesh)
     bpy.utils.unregister_class(InsertComponentOnMaterial)
+    bpy.utils.unregister_class(InsertComponentOnScene)
     bpy.utils.unregister_class(InsertComponentOnLight)
     bpy.utils.unregister_class(InsertComponentOnCollection)
+    bpy.utils.unregister_class(InsertComponentOnBone)
     ## Remove Operations
     bpy.utils.unregister_class(RemoveComponentOnObject)
     bpy.utils.unregister_class(RemoveComponentOnMesh)
     bpy.utils.unregister_class(RemoveComponentOnMaterial)
+    bpy.utils.unregister_class(RemoveComponentOnScene)
     bpy.utils.unregister_class(RemoveComponentOnLight)
     bpy.utils.unregister_class(RemoveComponentOnCollection)
+    bpy.utils.unregister_class(RemoveComponentOnBone)
     ## Preset Operations
     bpy.utils.unregister_class(ApplyPresetToObject)
     bpy.utils.unregister_class(ApplyPresetToMesh)
     bpy.utils.unregister_class(ApplyPresetToMaterial)
+    bpy.utils.unregister_class(ApplyPresetToScene)
     bpy.utils.unregister_class(ApplyPresetToLight)
     bpy.utils.unregister_class(ApplyPresetToCollection)
+    bpy.utils.unregister_class(ApplyPresetToBone)
     # panel
     bpy.utils.unregister_class(SkeinPanelObject)
     bpy.utils.unregister_class(SkeinPanelMesh)
     bpy.utils.unregister_class(SkeinPanelMaterial)
+    bpy.utils.unregister_class(SkeinPanelScene)
     bpy.utils.unregister_class(SkeinPanelLight)
     bpy.utils.unregister_class(SkeinPanelCollection)
+    bpy.utils.unregister_class(SkeinPanelBone)
     # Skein Preset Menu
     bpy.utils.unregister_class(SkeinPresetMenu)
     # gltf extension
@@ -264,6 +285,9 @@ def unregister():
     for cmd in cli_commands:
         bpy.utils.unregister_cli_command(cmd)
     cli_commands.clear()
+
+    # Remove handlers
+    bpy.app.handlers.load_post.remove(on_post_blend_file_load)
 
     # Remove menu
     bpy.types.TOPBAR_MT_edit.remove(menu_func)
